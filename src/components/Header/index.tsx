@@ -1,8 +1,10 @@
-import logo from "logo.png";
+import Image from "next/image";
+import logo from "/public/logo.png";
+
 const Header = () => {
   return (
     <div>
-      <img src="logo.png" alt="test" />
+      <Image src={logo} alt="logo" width={50} height={50} />
       <h1>Memorista</h1>
     </div>
   );
