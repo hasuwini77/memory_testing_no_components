@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/Header";
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -68,31 +69,41 @@ export default function Home() {
   }
 
   return (
-    <main>
-      <Header />
-      <div className="grid grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
-        {initialImages.map((image, index) => (
+    <main className="">
+      <BackgroundBeamsWithCollision>
+        <Header />
+        <div className="grid grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
+          {initialImages.map((image, index) => (
+            <button
+              key={index}
+              onClick={() => handleClick(index)}
+              data-testid="card"
+              className="bg-gray-100 border-2 border-gray-300 rounded-lg h-28 flex items-center justify-center text-4xl font-bold cursor-pointer transform transition-transform duration-300 hover:bg-gray-200 hover:-translate-y-1"
+            >
+              {turnedStates[index] !== null ? (
+                <Image
+                  src={image}
+                  alt={`card-${index}`}
+                  width={100}
+                  height={100}
+                  data-testid="card-image"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                "?"
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="flex justify-center p-6">
           <button
-            key={index}
-            onClick={() => handleClick(index)}
-            data-testid="card"
-            className="bg-gray-100 border-2 border-gray-300 rounded-lg h-28 flex items-center justify-center text-4xl font-bold cursor-pointer transform transition-transform duration-300 hover:bg-gray-200 hover:-translate-y-1"
+            className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
+            data-testid="new-game-btn"
           >
-            {turnedStates[index] !== null ? (
-              <Image
-                src={image}
-                alt={`card-${index}`}
-                width={100}
-                height={100}
-                data-testid="card-image"
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              "?"
-            )}
+            New Game
           </button>
-        ))}
-      </div>
+        </div>
+      </BackgroundBeamsWithCollision>
     </main>
   );
 }
