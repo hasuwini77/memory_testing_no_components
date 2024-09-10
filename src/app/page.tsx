@@ -8,6 +8,7 @@ export default function Home() {
   const [turnedStates, setTurnedStates] = useState<(number | null)[]>(
     Array(12).fill(null)
   );
+  const [flippedCardIndexes, setFlippedCardIndexes] = useState<number[]>([]);
   const [initialImages, setInitialImages] = useState<string[]>([]);
 
   useEffect(() => {
@@ -34,12 +35,36 @@ export default function Home() {
     setInitialImages(getRandomizedImages());
   }, []);
 
+  useEffect(() => {
+    if (flippedCardIndexes.length === 2) {
+      const [firstIndex, secondIndex] = flippedCardIndexes;
+      if (initialImages[firstIndex] !== initialImages[secondIndex]) {
+        // No match, flip back after a delay
+        setTimeout(() => {
+          setTurnedStates((prevState) => {
+            const newState = [...prevState];
+            newState[firstIndex] = null;
+            newState[secondIndex] = null;
+            return newState;
+          });
+          setFlippedCardIndexes([]);
+        }, 1100);
+      } else {
+        // Match, reset flipped card indexes
+        setFlippedCardIndexes([]);
+      }
+    }
+  }, [flippedCardIndexes]);
+
   function handleClick(index: number) {
-    setTurnedStates((prevState) => {
-      const newState = [...prevState];
-      newState[index] = index;
-      return newState;
-    });
+    if (flippedCardIndexes.length < 2 && turnedStates[index] === null) {
+      setTurnedStates((prevState) => {
+        const newState = [...prevState];
+        newState[index] = index;
+        return newState;
+      });
+      setFlippedCardIndexes((prevIndexes) => [...prevIndexes, index]);
+    }
   }
 
   return (
