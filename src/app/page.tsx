@@ -15,6 +15,7 @@ export default function Home() {
   const [newHighScore, setNewHighScore] = useState<number | null>(null);
   const [highscorePopup, setHighscorePopup] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("");
+  const [highscoreName, setHighscoreName] = useState<string>("");
   const [gameCompleted, setGameCompleted] = useState<boolean>(false);
 
   // Load highscore and username from localStorage
@@ -26,7 +27,7 @@ export default function Home() {
       setNewHighScore(parseInt(savedHighScore, 10));
     }
     if (savedName) {
-      setUserName(savedName);
+      setHighscoreName(savedName);
     }
   }, []);
 
@@ -78,13 +79,20 @@ export default function Home() {
     }
   }, [flippedCardIndexes, initialImages]);
 
+  // Check if all cards are revealed and set gameCompleted state
   useEffect(() => {
     const allCardsRevealed = turnedStates.every((state) => state !== null);
 
     if (allCardsRevealed) {
+      setGameCompleted(true);
+    }
+  }, [turnedStates]);
+
+  // Determine if a new high score has been achieved and set highscorePopup state
+  useEffect(() => {
+    if (gameCompleted) {
       const isNewHighscore =
         newHighScore === null || numberOfMoves < newHighScore;
-      setGameCompleted(true);
 
       if (isNewHighscore) {
         setHighscorePopup(true);
@@ -92,10 +100,9 @@ export default function Home() {
         setHighscorePopup(false);
       }
     } else {
-      setGameCompleted(false);
       setHighscorePopup(false);
     }
-  }, [turnedStates, numberOfMoves, newHighScore]);
+  }, [gameCompleted, numberOfMoves, newHighScore]);
 
   function handleClick(index: number) {
     if (flippedCardIndexes.length < 2 && turnedStates[index] === null) {
@@ -114,31 +121,18 @@ export default function Home() {
     setTurnedStates(Array(12).fill(null));
     setNumberOfMoves(0);
     setGameCompleted(false);
+    setHighscorePopup(false);
   }
 
   function handleHighscoreSubmit() {
     if (userName.trim() !== "") {
       localStorage.setItem("name", userName);
       localStorage.setItem("highscore", numberOfMoves.toString());
+      setHighscoreName(userName);
       setNewHighScore(numberOfMoves);
       setHighscorePopup(false);
     }
   }
-
-  // Debugging Logs
-  useEffect(() => {
-    console.log("Turned States:", turnedStates);
-    console.log("Number of Moves:", numberOfMoves);
-    console.log("New Highscore:", newHighScore);
-    console.log("Game Completed:", gameCompleted);
-    console.log("Highscore Popup:", highscorePopup);
-  }, [
-    turnedStates,
-    numberOfMoves,
-    newHighScore,
-    gameCompleted,
-    highscorePopup,
-  ]);
 
   return (
     <main className="">
@@ -181,13 +175,17 @@ export default function Home() {
               Number of Moves: {numberOfMoves}
             </span>
             <span className="text-white p-2" data-testid="highscore">
-              Highscore: {newHighScore !== null ? newHighScore : "N/A"}
+              {highscoreName ? `${highscoreName}: ` : ""}Highscore:{" "}
+              {newHighScore !== null ? newHighScore : "N/A"}
             </span>
           </div>
         </div>
 
         {highscorePopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            data-testid="highscore-popup"
+          >
             <div className="bg-white p-4 rounded-lg shadow-lg">
               <h2 className="text-lg font-bold">New Highscore!</h2>
               <input
