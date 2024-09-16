@@ -5,6 +5,9 @@ import Footer from "@/components/Footer";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Highscore from "@/components/Highscore";
+import NewGameButton from "@/components/NewGameBtn";
+import Rules from "@/components/Rules";
 
 export default function Home() {
   const [turnedStates, setTurnedStates] = useState<(number | null)[]>(
@@ -15,11 +18,10 @@ export default function Home() {
   const [numberOfMoves, setNumberOfMoves] = useState<number>(0);
   const [newHighScore, setNewHighScore] = useState<number | null>(null);
   const [highscorePopup, setHighscorePopup] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>("");
   const [highscoreName, setHighscoreName] = useState<string>("");
   const [gameCompleted, setGameCompleted] = useState<boolean>(false);
 
-  // Load highscore and username from localStorage
+  // Load highscore from localStorage
   useEffect(() => {
     const savedHighScore = localStorage.getItem("highscore");
     const savedName = localStorage.getItem("name");
@@ -80,7 +82,7 @@ export default function Home() {
     }
   }, [flippedCardIndexes, initialImages]);
 
-  // Check if all cards are revealed and set gameCompleted state
+  // Check if all cards are revealed
   useEffect(() => {
     const allCardsRevealed = turnedStates.every((state) => state !== null);
 
@@ -89,7 +91,7 @@ export default function Home() {
     }
   }, [turnedStates]);
 
-  // Determine if a new high score has been achieved and set highscorePopup state
+  // Determine if a new high score has been achieved
   useEffect(() => {
     if (gameCompleted) {
       const isNewHighscore =
@@ -125,20 +127,22 @@ export default function Home() {
     setHighscorePopup(false);
   }
 
-  function handleHighscoreSubmit() {
-    if (userName.trim() !== "") {
-      localStorage.setItem("name", userName);
-      localStorage.setItem("highscore", numberOfMoves.toString());
-      setHighscoreName(userName);
-      setNewHighScore(numberOfMoves);
-      setHighscorePopup(false);
-    }
+  function updateNewHighscore(name: string, moves: number) {
+    localStorage.setItem("name", name);
+    localStorage.setItem("highscore", moves.toString());
+    setHighscoreName(name);
+    setNewHighScore(moves);
+    setHighscorePopup(false);
   }
 
   return (
-    <main className="">
+    <main>
       <BackgroundLines>
         <Header />
+
+        {/* Add Rules component here */}
+        <Rules />
+
         <div className="grid grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
           {initialImages.map((image, index) => (
             <button
@@ -164,13 +168,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center p-6">
-          <button
-            className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
-            data-testid="new-game-btn"
-            onClick={resetGame}
-          >
-            New Game
-          </button>
+          <NewGameButton newRound={resetGame} />
           <div className="flex flex-col items-center justify-center">
             <span className="text-white p-2" data-testid="moves">
               Number of Moves: {numberOfMoves}
@@ -182,31 +180,12 @@ export default function Home() {
           </div>
         </div>
 
-        {highscorePopup && (
-          <div
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-            data-testid="highscore-popup"
-          >
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <h2 className="text-lg font-bold">New Highscore!</h2>
-              <input
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Enter your name"
-                data-testid="input"
-                className="border border-gray-300 p-2 mt-2 w-full"
-              />
-              <button
-                onClick={handleHighscoreSubmit}
-                data-testid="highscore-button"
-                className="bg-green-500 text-white font-bold py-2 px-4 mt-2 rounded"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        )}
+        <Highscore
+          updateNewHighscore={updateNewHighscore}
+          highscorePopup={highscorePopup}
+          numberOfMoves={numberOfMoves}
+        />
+
         <Footer />
       </BackgroundLines>
     </main>

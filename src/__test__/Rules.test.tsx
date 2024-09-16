@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Rules from ".";
+import Rules from "@/components/Rules";
 
 beforeEach(() => {
   render(<Rules />);
