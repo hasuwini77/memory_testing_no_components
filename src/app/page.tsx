@@ -167,13 +167,14 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="flex justify-center p-6">
+        <div className="flex flex-col items-center p-6 space-y-6">
           <NewGameButton newRound={resetGame} />
-          <div className="flex flex-col items-center justify-center">
-            <span className="text-white p-2" data-testid="moves">
+
+          <div className="flex flex-col items-center justify-center border-4 border-purple-500 rounded-lg shadow-lg bg-gradient-to-br from-purple-800 via-purple-600 to-purple-400 text-white max-w-md p-4">
+            <span className="text-white p-2 text-lg" data-testid="moves">
               Number of Moves: {numberOfMoves}
             </span>
-            <span className="text-white p-2" data-testid="highscore">
+            <span className="text-white p-2 text-lg" data-testid="highscore">
               {highscoreName ? `${highscoreName}: ` : ""}Highscore:{" "}
               {newHighScore !== null ? newHighScore : "N/A"}
             </span>
