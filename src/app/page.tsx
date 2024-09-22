@@ -141,7 +141,7 @@ export default function Home() {
         <Header />
 
         {/* Add Rules component here */}
-        <Rules />
+        {/* <Rules /> */}
 
         <div className="grid grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
           {initialImages.map((image, index) => (
