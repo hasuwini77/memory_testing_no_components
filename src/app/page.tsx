@@ -85,7 +85,6 @@ export default function Home() {
   // Check if all cards are revealed
   useEffect(() => {
     const allCardsRevealed = turnedStates.every((state) => state !== null);
-
     if (allCardsRevealed) {
       setGameCompleted(true);
     }
@@ -96,7 +95,6 @@ export default function Home() {
     if (gameCompleted) {
       const isNewHighscore =
         newHighScore === null || numberOfMoves < newHighScore;
-
       if (isNewHighscore) {
         setHighscorePopup(true);
       } else {
@@ -136,14 +134,14 @@ export default function Home() {
   }
 
   return (
-    <main>
+    <main className="flex flex-col min-h-screen">
       <BackgroundLines>
         <Header />
 
         {/* Add Rules component here */}
         <Rules />
 
-        <div className="grid grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-5 max-w-xl mx-auto">
           {initialImages.map((image, index) => (
             <button
               key={index}
@@ -171,10 +169,16 @@ export default function Home() {
           <NewGameButton newRound={resetGame} />
 
           <div className="flex flex-col items-center justify-center border-4 border-purple-500 rounded-lg shadow-lg bg-gradient-to-br from-purple-800 via-purple-600 to-purple-400 text-white max-w-md p-4">
-            <span className="text-white p-2 text-lg" data-testid="moves">
+            <span
+              className="text-white p-2 text-lg md:text-xl"
+              data-testid="moves"
+            >
               Number of Moves: {numberOfMoves}
             </span>
-            <span className="text-white p-2 text-lg" data-testid="highscore">
+            <span
+              className="text-white p-2 text-lg md:text-xl"
+              data-testid="highscore"
+            >
               {highscoreName ? `${highscoreName}: ` : ""}Highscore:{" "}
               {newHighScore !== null ? newHighScore : "N/A"}
             </span>
